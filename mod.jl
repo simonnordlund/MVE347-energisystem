@@ -14,18 +14,15 @@ function build_energy_model(data_file::String)
   
     @constraint(m,[i in [1,2,4]], z[i,1]*10^6<=cap_de[i]) #maximun capacitets for Germany
     @constraint(m,[i in [1,2,4]], z[i,2]*10^6<=cap_swe[i]) #maximun capacitets for Sweden
-    @constraint(m, [i in [1,2,4]],z[i,3]*10^6<=cap_dk[i]) #maximun capacitets for Denmark
+    @constraint(m,[i in [1,2,4]], z[i,3]*10^6<=cap_dk[i]) #maximun capacitets for Denmark
 
-    @constraint(m,[s in S],sum(x[i,2,s] for i in I)==Load_SE) #Load balance for Sweden
-    @constraint(m,[s in S],sum(x[i,3,s] for i in I)==Load_DK) #Load balance for Denmark
-    @constraint(m,[s in S],sum(x[i,1,s] for i in I)==Load_DE) #Load balance for Germany
+    @constraint(m,[s in S],z[1,1]*10^3*Wind_DE[s]>=x[1,1,s]) #Maximum possible production
+    @constraint(m,[s in S],z[1,2]*10^3*Wind_SE[s]>=x[1,2,s]) #Maximum possible production
+    @constraint(m,[s in S],z[1,3]*10^3*Wind_DK[s]>=x[1,3,s]) #Maximum possible production
+    @constraint(m,[s in S],z[2,1]*10^3*PV_DE[s]>=x[2,1,s]) #Maximum possible production
+    @constraint(m,[s in S],z[2,2]*10^3*PV_SE[s]>=x[2,2,s]) #Maximum possible production
+    @constraint(m,[s in S],z[2,3]*10^3*PV_DK[s]>=x[2,3,s]) #Maximum possible production
 
-    @constraint(m,[s in S],z[1,1]*10^3*wind_DE>=x[1,1,s]) #Maximum possible production
-    @constraint(m,[s in S],z[1,2]*10^3*wind_SE>=x[1,2,s]) #Maximum possible production
-    @constraint(m,[s in S],z[1,3]*10^3*wind_DK>=x[1,3,s]) #Maximum possible production
-    @constraint(m,[s in S],z[2,1]*10^3*PV_DE>=x[2,1,s]) #Maximum possible production
-    @constraint(m,[s in S],z[2,2]*10^3*PV_SE>=x[2,2,s]) #Maximum possible production
-    @constraint(m,[s in S],z[2,3]*10^3*PV_DK>=x[2,3,s]) #Maximum possible production
     @constraint(m,[s in S],x[3,1,s] <= z[3,1]*10^3*efficiency[3]) #Efficiency for gas
     @constraint(m,[s in S],x[3,2,s] <= z[3,2]*10^3*efficiency[3]) #Efficiency for gas
     @constraint(m,[s in S],x[3,3,s] <= z[3,3]*10^3*efficiency[3]) #Efficiency for gas
@@ -34,10 +31,16 @@ function build_energy_model(data_file::String)
     @constraint(m,volume[1]==14*10^3) #first hour of water
     #Reservoir >=0 and >=max for every hour
     for hour in 2:length(time_arr)-1
-        @constraint(m,volume[hour]==volume[hour-1]-sum(x[4,j,hour-1] for j in J)+hydro_inflow[hour-1])
+        @constraint(m,volume[hour]==volume[hour-1]-sum(x[4,j,hour-1] for j in J)+Hydro_inflow[hour-1])
     end
 
-    @constraint(m,volume<=33*10^6)
+    @constraint(m,[s in S], volume[s]<=33*10^6)
     @constraint(m,volume[1]==volume[end])
+
+    @constraint(m,[s in S],sum(x[i,2,s] for  i in I)==Load_SE[s]) #Load balance for Sweden
+    @constraint(m,[s in S],sum(x[i,3,s] for i in I)==Load_DK[s]) #Load balance for Denmark
+    @constraint(m,[s in S],sum(x[i,1,s] for i in I)==Load_DE[s]) #Load balance for Germany
+
+   
     return m,x,z
 end

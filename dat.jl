@@ -6,16 +6,16 @@ using CSV, DataFrames
 data=CSV.read("TimeSeries.csv",DataFrame)
 array_data=Matrix(data)
 time_arr=array_data[:,1]
-wind_DE=array_data[:,2]
+Wind_DE=array_data[:,2]
 PV_DE=array_data[:,3]
-wind_SE=array_data[:,4]
+Wind_SE=array_data[:,4]
 PV_SE=array_data[:,5]
 Wind_DK=array_data[:,6]
-PV_dk=array_data[:,7]
+PV_DK=array_data[:,7]
 Load_DE=array_data[:,8]
 Load_DK=array_data[:,9]
 Load_SE=array_data[:,10]
-hydro_inflow=array_data[:,11]
+Hydro_inflow=array_data[:,11]
 
 # Sets
 I = 1:4 # 7 energy types

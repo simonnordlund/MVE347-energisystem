@@ -3,7 +3,7 @@ using Clp       #load the package Clp (an open linear-programming solver)
 using Gurobi   #The commercial optimizer Gurobi requires installation
 include("mod.jl")
 m, x = build_energy_model("dat.jl")
-print(m) # prints the model instance
+#print(m) # prints the model instance
 #set_optimizer(m, clp.Optimizer)
 set_optimizer_attribute(m, "LogLevel", 1)
 set_optimizer(m, Gurobi.Optimizer)
