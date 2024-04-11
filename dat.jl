@@ -31,9 +31,3 @@ emiss_factor=[0,0,0.202,0,0,0,0]
 cap_swe=[280,75,1,14,1,1,1]
 cap_dk=[90,60,1,0,1,1,1]
 cap_de=[180,460,1,0,1,1,1]
-
-
-
-
-foods = ["hamburger", "chicken", "hot dog", "fries", "macaroni", "pizza", "salad", "milk", "ice cream"] # for i in I
-nutrients  = ["calories", "protein", "fat", "sodium"]
