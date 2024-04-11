@@ -5,7 +5,7 @@ using CSV, DataFrames
 
 data=CSV.read("TimeSeries.csv",DataFrame)
 array_data=Matrix(data)
-time=array_data[:,1]
+time_arr=array_data[:,1]
 wind_DE=array_data[:,2]
 PV_DE=array_data[:,3]
 wind_SE=array_data[:,4]
@@ -18,9 +18,9 @@ Load_SE=array_data[:,10]
 hydro_inflow=array_data[:,11]
 
 # Sets
-I = 1:9 # 9 energy types
+I = 1:4 # 7 energy types
 J = 1:3 # Set of countries
-S=1:length(time) # set of hours
+S=1:length(time_arr) # set of hours
 
 inv_cost=[1100,600,550,0,150,2500,7700]
 run_cost=[0.1,0.1,2,0.1,0.1,0,4]
