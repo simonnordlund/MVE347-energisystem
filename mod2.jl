@@ -2,6 +2,8 @@ function build_energy_model(data_file::String)
     include(data_file)  
     #name the model
     m = Model()
+
+    
     r=0.05
     @variable(m, x[I,J,S] >= 0) #Variable hour, amount of MWH for technology i for country j for a certian hour s.
     @variable(m,z[I,J] >= 0) #The capacity, amount of kw for technology i for country j
@@ -18,10 +20,10 @@ function build_energy_model(data_file::String)
     @constraint(m,[i in [1,2,4]], z[i,2]*10^6 <= cap_swe[i]) #maximun capacitets for Sweden
     @constraint(m,[i in [1,2,4]], z[i,3]*10^6 <= cap_dk[i]) #maximun capacitets for Denmark
 
-    @constraint(m,[s in S],z[1,1]*10^3*Wind_DE[s] >=x [1,1,s]) #Maximum possible production
-    @constraint(m,[s in S],z[1,2]*10^3*Wind_SE[s] >=x [1,2,s]) #Maximum possible production
-    @constraint(m,[s in S],z[1,3]*10^3*Wind_DK[s] >=x [1,3,s]) #Maximum possible production
-    @constraint(m,[s in S],z[2,1]*10^3*PV_DE[s] >=x [2,1,s]) #Maximum possible production
+    @constraint(m,[s in S],z[1,1]*10^3*Wind_DE[s] >= x[1,1,s]) #Maximum possible production
+    @constraint(m,[s in S],z[1,2]*10^3*Wind_SE[s] >= x[1,2,s]) #Maximum possible production
+    @constraint(m,[s in S],z[1,3]*10^3*Wind_DK[s] >= x[1,3,s]) #Maximum possible production
+    @constraint(m,[s in S],z[2,1]*10^3*PV_DE[s] >= x[2,1,s]) #Maximum possible production
     @constraint(m,[s in S],z[2,2]*10^3*PV_SE[s]>=x[2,2,s]) #Maximum possible production
     @constraint(m,[s in S],z[2,3]*10^3*PV_DK[s]>=x[2,3,s]) #Maximum possible production
 
