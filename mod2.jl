@@ -9,7 +9,6 @@ function build_energy_model(data_file::String)
     @variable(m,z[I,J] >= 0) #The capacity, amount of kw for technology i for country j
     @variable(m,volume[S] >= 0)
     @variable(m,batterystorage[J,S] >= 0) # amount of MWH for a battery in country j during an hour s.
-    @variable(m,batterycap[J] >= 0) #Amount of MW for battery in country j.
     #minimize the cost
    
     @objective(m, Min, sum(run_cost[i] * sum(x[i,j,s] / efficiency[i] for s in S) for j in J for i in I)
@@ -54,7 +53,7 @@ function build_energy_model(data_file::String)
 
 
     #Constraints for batteries
-    @constraint(m, [j in J, s in S],batterystorage[j,s] <= batterycap[j] ) #Make sure that the charge does not exceed maximum capacity.
+    @constraint(m, [j in J, s in S],batterystorage[j,s] <= z[5,j] ) #Make sure that the charge does not exceed maximum capacity.
 
     for hour in 2:length(time_arr)
         @constraint(m,batterystorage[1,hour] == batterystorage[1,hour-1] + sum(x[i,1,hour] for i in I) - Load_DE[hour] ) #Battery charge flow DE
