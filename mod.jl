@@ -10,7 +10,7 @@ function build_energy_model(data_file::String)
     #minimize the cost
    
     @objective(m, Min, sum(run_cost[i] * sum(x[i,j,s] / efficiency[i] for s in S) for j in J for i in I)
-    + sum(inv_cost[i]/1000 * r/(1-1/(1+r)^lifetime[i]) * sum(z[i,j] for j in J) for i in I)
+    + sum(inv_cost[i]/1000 * r/(1-1/(1+r)^lifetime[i]) * sum(z[i,j]/1000 for j in J) for i in I)
     +fuel_cost[3]*sum(x[3,j,s] for j in J for s in S ))
   
     @constraint(m,[i in [1,2,4]], z[i,1]*10^6 <= cap_de[i]) #maximun capacitets for Germany
