@@ -47,11 +47,11 @@ function build_energy_model(data_file::String)
     @constraint(m,[s in S], sum(x[i,1,s] for i in I) == Load_DE[s]) #Load balance for Germany
 
     
-    @constraint(m,(1/0.4)*sum(x[3,j,s] for s in S for j in J)<=0.1*1.98*10^9)
+    @constraint(m,(1/0.4)*sum(x[3,j,s] for s in S for j in J)<=0.1*1.98*10^9) #CO2
 
 
     #Constraints for batteries
-    @constraint(m, [j in J s in S],batterystorage[j,s] <= batterycap[j] ) #Make sure that the charge does not exceed maximum capacity.
+    @constraint(m, [j in J, s in S],batterystorage[j,s] <= batterycap[j] ) #Make sure that the charge does not exceed maximum capacity.
 
     for hour in 2:length(time_arr)-1
         @constraint(m,batterystorage[1,hour] == batterystorage[1,hour-1] + sum(x[i,1,hour] for i in I) - Load_DE[hour]/1000 ) #Battery charge flow DE
