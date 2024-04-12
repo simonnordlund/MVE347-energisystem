@@ -6,6 +6,7 @@ function build_energy_model(data_file::String)
     @variable(m, x[I,J,S] >= 0) #Variable hour, amount of MWH for technology i for country j for a certian hour s.
     @variable(m,z[I,J]>=0) #The capacity, amount of kw for technology i for country j
     @variable(m,volume[S]>=0)
+    @variable(m,battery[J,S]>=0) # amount of MWH for a battery in country j during an hour s.
     #minimize the cost
    
     @objective(m, Min, sum(run_cost[i]*sum(x[i,j,s] for s in S) for j in J for i in I)
@@ -41,6 +42,9 @@ function build_energy_model(data_file::String)
     @constraint(m,[s in S],sum(x[i,3,s] for i in I)==Load_DK[s]) #Load balance for Denmark
     @constraint(m,[s in S],sum(x[i,1,s] for i in I)==Load_DE[s]) #Load balance for Germany
 
-   
+   #@constraint(m,(1/0.4)*sum(x[3,j,s] for s in S for j in J)<=0.1*1.98*10^9)
+   @constraint(m,battery[j,1]==battery[j,end])
+   @constraint(m,)
+
     return m,x,z
 end

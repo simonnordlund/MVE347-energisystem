@@ -10,3 +10,4 @@ set_optimizer(m, Gurobi.Optimizer)
 optimize!(m)
 
 println("z =  ", objective_value(m))   		# display the optimal solution
+println("x=",(1/0.4)*sum(value.(x[3,j,s]) for s in S for j in J),"co2")
