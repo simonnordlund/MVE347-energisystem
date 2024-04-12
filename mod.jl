@@ -30,7 +30,7 @@ function build_energy_model(data_file::String)
     @constraint(m,[s in S],x[3,3,s] <= z[3,3]*10^3) #Maxiumum output for gas DK
 
 
-    @constraint(m,volume[1]==14*10^3) #first hour of water
+    #@constraint(m,volume[1]==14*10^3) #first hour of water
     #Reservoir >=0 and >=max for every hour
     for hour in 2:length(time_arr)-1
         @constraint(m,volume[hour] == volume[hour-1] - sum(x[4,j,hour-1] for j in J) + Hydro_inflow[hour-1]) 
@@ -40,10 +40,10 @@ function build_energy_model(data_file::String)
     
     @constraint(m,[s in S], 0 <= volume[s] <= 33*10^6)
     
-
-    @constraint(m,[s in S], sum(x[i,2,s] for  i in I) == Load_SE[s]) #Load balance for Sweden
-    @constraint(m,[s in S], sum(x[i,3,s] for i in I) == Load_DK[s]) #Load balance for Denmark
-    @constraint(m,[s in S], sum(x[i,1,s] for i in I) == Load_DE[s]) #Load balance for Germany
+    @constraint(m,[s in S], sum(x[i,1,s] for i in I) >= Load_DE[s]) #Load balance for Germany
+    @constraint(m,[s in S], sum(x[i,2,s] for  i in I) >= Load_SE[s]) #Load balance for Sweden
+    @constraint(m,[s in S], sum(x[i,3,s] for i in I) >= Load_DK[s]) #Load balance for Denmark
+    
 
     return m,x,z
 end
