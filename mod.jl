@@ -32,8 +32,8 @@ function build_energy_model(data_file::String)
 
     #@constraint(m,volume[1]==14*10^3) #first hour of water
     #Reservoir >=0 and >=max for every hour
-        
-    for hour in 2:length(time_arr)-1
+
+    for hour in 2:length(time_arr)
         @constraint(m,volume[hour] == volume[hour-1] - x[4,2,hour-1] + Hydro_inflow[hour-1]) #Waterflow each hour
     end
     @constraint(m,[i in [1,3],s in S], x[4,i,s] == 0) #No water in DK & DE
