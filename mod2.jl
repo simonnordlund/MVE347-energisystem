@@ -70,8 +70,8 @@ function build_energy_model(data_file::String)
 
 
 
-    @constraint(m,batterystorage[1,1] == batterystorage[1,end] + sum(x[i,3,end] for i in I) - Load_DK[end] ) #Constraint the first hour == last hour
-    @constraint(m,batterystorage[2,1] == batterystorage[2,end] + sum(x[i,3,end] for i in I) - Load_DK[end] ) #Constraint the first hour == last hour
+    @constraint(m,batterystorage[1,1] == batterystorage[1,end] + sum(x[i,1,end] for i in I) - Load_DE[end] ) #Constraint the first hour == last hour
+    @constraint(m,batterystorage[2,1] == batterystorage[2,end] + sum(x[i,2,end] for i in I) - Load_SE[end] ) #Constraint the first hour == last hour
     @constraint(m,batterystorage[3,1] == batterystorage[3,end] + sum(x[i,3,end] for i in I) - Load_DK[end] ) #Constraint the first hour == last hour
 
     
