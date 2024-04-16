@@ -2,7 +2,7 @@ using JuMP      #load the package JuMP
 using Clp       #load the package Clp (an open linear-programming solver)
 using Gurobi   #The commercial optimizer Gurobi requires installation
 include("mod2.jl")
-m, x = build_energy_model("dat2.jl")
+m, x, z = build_energy_model("dat2.jl")
 #print(m) # prints the model instance
 #set_optimizer(m, clp.Optimizer)
 set_optimizer_attribute(m, "LogLevel", 1)
