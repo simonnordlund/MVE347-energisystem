@@ -19,7 +19,7 @@ function build_energy_model(data_file::String)
     #minimize the cost
    
     @objective(m, Min, sum(Running_Cost) + sum(Annualized_Investment) + sum(Fuel_Cost) )
-  
+    @constraint(m, ENERGY_CAP[i in I, j in J,s in S], x[i,j,s]<=z[i,j]) # for each energy type we cant produce more than built for each hour
 
     @constraint(m, ANNUALIZED_INVESTMENT[i in I, j in J], Annualized_Investment[i,j] >= inv_cost[i] * r/(1-1/(1+r)^lifetime[i]) * z[i,j])
     @constraint(m, FUEL_COST[i in I, j in J], Fuel_Cost[i,j] >= fuel_cost[i]/efficiency[i]*sum(x[i,j,s] for s in S ) )
@@ -39,10 +39,6 @@ function build_energy_model(data_file::String)
     @constraint(m,[s in S],z[2,1]*PV_DE[s] >= x[2,1,s]) #Maximum possible production solar DE
     @constraint(m,[s in S],z[2,2]*PV_SE[s] >= x[2,2,s]) #Maximum possible production solar SE
     @constraint(m,[s in S],z[2,3]*PV_DK[s] >= x[2,3,s]) #Maximum possible production solar DK
-
-    @constraint(m,[s in S],x[3,1,s] <= z[3,1]) #Maxiumum output for gas DE
-    @constraint(m,[s in S],x[3,2,s] <= z[3,2]) #Maxiumum output for gas SE
-    @constraint(m,[s in S],x[3,3,s] <= z[3,3]) #Maxiumum output for gas DK
 
 
     #@constraint(m,volume[1]==14*10^3) #first hour of water

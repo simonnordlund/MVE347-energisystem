@@ -24,7 +24,8 @@ function build_energy_model(data_file::String)
     #minimize the cost
    
     @objective(m, Min, sum(Running_Cost) + sum(Annualized_Investment) + sum(Fuel_Cost) )
-  
+    @constraint(m, ENERGY_CAP[i in I, j in J,s in S], x[i,j,s]<=z[i,j]) # for each energy type we cant produce more than built for each hour
+
 
     @constraint(m, ANNUALIZED_INVESTMENT[i in I, j in J], Annualized_Investment[i,j] >= inv_cost[i] * r/(1-1/(1+r)^lifetime[i]) * z[i,j])
     @constraint(m, FUEL_COST[i in I, j in J], Fuel_Cost[i,j] >= fuel_cost[i]/efficiency[i]*sum(x[i,j,s] for s in S ) )
@@ -44,10 +45,6 @@ function build_energy_model(data_file::String)
     @constraint(m,[s in S],z[2,1]*PV_DE[s] >= x[2,1,s]) #Maximum possible production solar DE
     @constraint(m,[s in S],z[2,2]*PV_SE[s] >= x[2,2,s]) #Maximum possible production solar SE
     @constraint(m,[s in S],z[2,3]*PV_DK[s] >= x[2,3,s]) #Maximum possible production solar DK
-
-    @constraint(m,[s in S],x[3,1,s] <= z[3,1]) #Maxiumum output for gas DE
-    @constraint(m,[s in S],x[3,2,s] <= z[3,2]) #Maxiumum output for gas SE
-    @constraint(m,[s in S],x[3,3,s] <= z[3,3]) #Maxiumum output for gas DK
 
 
     #@constraint(m,volume[1]==14*10^3) #first hour of water
@@ -71,7 +68,7 @@ function build_energy_model(data_file::String)
 
     #Constraints for batteries
     @constraint(m, Battery_Inflow_Cap[j in J,s in S], Battery_Flow[j,s] <= z[5,j] )
-    @constraint(m, [j in J, s in S],batterystorage[j,s] <= z[5,j] ) #Make sure that the charge does not exceed maximum capacity.
+    #@constraint(m, [j in J, s in S],batterystorage[j,s] <= z[5,j] ) #Make sure that the charge does not exceed maximum capacity.
 
     for hour in 2:length(time_arr)
         @constraint(m,batterystorage[1,hour] == batterystorage[1,hour-1] +Battery_Flow[1,hour] - Load_DE[hour] ) #Battery charge flow DE
@@ -92,7 +89,6 @@ function build_energy_model(data_file::String)
     @constraint(m,batterystorage[3,1] == batterystorage[3,end] + Battery_Flow[3,end] - Load_DK[end] ) #Constraint the first hour == last hour
     @constraint(m, STORAGE_INITIAL[j in J], batterystorage[j,1] == 0) #Battery empty at start
     @constraint(m, BATTERY_POWER[j in J, s in S], x[5,j,s] * efficiency[5] <= batterystorage[j,s]) 
-    
     #Transmission Constraints
 
     @constraint(m, TRANSMISSION_NET[j1 in J, s in S], sum( Trans_Flow[j1,j2,s] for j2 in J) == Trans_Net[j1,s]*efficiency[6] ) 
@@ -101,7 +97,6 @@ function build_energy_model(data_file::String)
     for hour in S, j in J
         @constraint(m, Trans_Flow[j,j,hour] == 0)
     end
-    @constraint(m,MAX_CAP_TRANS[j in J, s in S], x[6,j,s] <= z[6,j] ) #Can't transmit more energy than invested infrastructure.
-    
+
     return m,x,z
 end
