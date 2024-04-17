@@ -14,7 +14,7 @@ function build_energy_model(data_file::String)
     @variable(m,batterystorage[j in J,s in S] >= 0) # amount of MWH for a battery in country j during an hour s.
     @variable(m, Battery_Flow[j in J,s in S] >= 0) #Batter discharge
     @variable(m, Trans_Flow[j1 in J , j2 in J,s in S] >= 0 ) #Transmission flow between two countries during an hour
-    @variable(m, Trans_Net[j in J,S] >= 0 ) #Transmission net flow for a specific country during an hour.
+    @variable(m, Trans_Net[j in J,S] ) #Transmission net flow for a specific country during an hour.
 
 
 
@@ -58,12 +58,12 @@ function build_energy_model(data_file::String)
     
     @constraint(m,[s in S], 0 <= volume[s] <= 33*10^6) #Reservoir limits
     @constraint(m, Max_Hydro[s in S], x[4,2,s]<= volume[s])
-    @constraint(m,[s in S], sum(x[i,1,s] for i in I) - Battery_Flow[1,s] - Trans_Net[1,s] >= Load_DE[s]) #Load balance for Germany with battery and transmission
-    @constraint(m,[s in S], sum(x[i,2,s] for  i in I) - Battery_Flow[2,s] - Trans_Net[2,s] >= Load_SE[s]) #Load balance for Sweden with battery and transmission
-    @constraint(m,[s in S], sum(x[i,3,s] for i in I) - Battery_Flow[3,s] - Trans_Net[3,s] >= Load_DK[s]) #Load balance for Denmark with battery and transmission
+    @constraint(m,[s in S], sum(x[i,1,s] for i in I) - Battery_Flow[1,s] + Trans_Net[1,s] >= Load_DE[s]) #Load balance for Germany with battery and transmission
+    @constraint(m,[s in S], sum(x[i,2,s] for  i in I) - Battery_Flow[2,s] + Trans_Net[2,s] >= Load_SE[s]) #Load balance for Sweden with battery and transmission
+    @constraint(m,[s in S], sum(x[i,3,s] for i in I) - Battery_Flow[3,s] + Trans_Net[3,s] >= Load_DK[s]) #Load balance for Denmark with battery and transmission
     
     
-    @constraint(m,(0.202/0.4)*sum(x[3,j,s] for s in S for j in J)<=0.1*1.29*10^8) #CO2
+    @constraint(m,(0.202/0.4)*sum(x[3,j,s] for s in S for j in J)<=0.1*1.341*10^8) #CO2
 
 
     #Constraints for batteries
@@ -71,32 +71,39 @@ function build_energy_model(data_file::String)
     #@constraint(m, [j in J, s in S],batterystorage[j,s] <= z[5,j] ) #Make sure that the charge does not exceed maximum capacity.
 
     for hour in 2:length(time_arr)
-        @constraint(m,batterystorage[1,hour] == batterystorage[1,hour-1] +Battery_Flow[1,hour] - Load_DE[hour] ) #Battery charge flow DE
+        @constraint(m,batterystorage[1,hour] == batterystorage[1,hour-1] +Battery_Flow[1,hour]*efficiency[5] - x[5,1,hour] ) #Battery charge flow DE
     end
 
     for hour in 2:length(time_arr)
-        @constraint(m,batterystorage[2,hour] == batterystorage[2,hour-1] + Battery_Flow[2,hour] - Load_SE[hour] ) #Battery charge flow SE
+        @constraint(m,batterystorage[2,hour] == batterystorage[2,hour-1] + Battery_Flow[2,hour]*efficiency[5] - x[5,2,hour] ) #Battery charge flow SE
     end
 
     for hour in 2:length(time_arr)
-        @constraint(m,batterystorage[3,hour] == batterystorage[3,hour-1] + Battery_Flow[3,hour] - Load_DK[hour] ) #Battery charge flow DK
+        @constraint(m,batterystorage[3,hour] == batterystorage[3,hour-1] + Battery_Flow[3,hour]*efficiency[5] - x[5,3,hour] ) #Battery charge flow DK
     end
 
 
 
-    @constraint(m,batterystorage[1,1] == batterystorage[1,end] + Battery_Flow[1,end] - Load_DE[end] ) #Constraint the first hour == last hour
-    @constraint(m,batterystorage[2,1] == batterystorage[2,end] + Battery_Flow[2,end] - Load_SE[end] ) #Constraint the first hour == last hour
-    @constraint(m,batterystorage[3,1] == batterystorage[3,end] + Battery_Flow[3,end] - Load_DK[end] ) #Constraint the first hour == last hour
+    @constraint(m,batterystorage[1,1] == batterystorage[1,end] + Battery_Flow[1,end]*efficiency[5] - x[5,1,end] ) #Constraint the first hour == last hour
+    @constraint(m,batterystorage[2,1] == batterystorage[2,end] + Battery_Flow[2,end]*efficiency[5] - x[5,2,end] ) #Constraint the first hour == last hour
+    @constraint(m,batterystorage[3,1] == batterystorage[3,end] + Battery_Flow[3,end]*efficiency[5] - x[5,3,end] ) #Constraint the first hour == last hour
     @constraint(m, STORAGE_INITIAL[j in J], batterystorage[j,1] == 0) #Battery empty at start
     @constraint(m, BATTERY_POWER[j in J, s in S], x[5,j,s] * efficiency[5] <= batterystorage[j,s]) 
+   
     #Transmission Constraints
 
-    @constraint(m, TRANSMISSION_NET[j1 in J, s in S], sum( Trans_Flow[j1,j2,s] for j2 in J) == Trans_Net[j1,s]*efficiency[6] ) 
+    @constraint(m, TRANSMISSION_NET[j1 in J, s in S], sum( Trans_Flow[j1,j2,s] for j2 in J for j1 in J) == Trans_Net[j1,s]*efficiency[6] ) 
     @constraint(m, TRANSMISSION_FRAC[j in J, s in S], x[6, j, s] == sum(Trans_Flow[j2, j, s] for j2 in J) ) #How much electricity comes from transmission from other countries.
     
     for hour in S, j in J
         @constraint(m, Trans_Flow[j,j,hour] == 0)
     end
 
-    return m,x,z
+    @constraint(m, TRANSMISSION_CAP1[j1 in J, j2 in J,s in S], Trans_Flow[j1, j2,s]  <= z[6,j1] )
+    @constraint(m, TRANSMISSION_CAP2[j1 in J, j2 in J,s in S], Trans_Flow[j2, j1,s]  <= z[6,j1] )
+    
+    @constraint(m, TRANSMISSION_MAX[j1 in J, s in S], sum(Trans_Flow[j1,j2,s] for j2 in J ) <= z[6,j1])
+    #@constraint(m, TRANSMISSION_EXCHANGE[j1 in J, j2 in J, s in S], Trans_Flow[j1,j2,s] == -Trans_Flow[j2,j1,s])
+    @constraint(m,NETTO_NOLL[s in S],sum(Trans_Net[j,s] for j in J)==0)
+    return m,x,z,Trans_Net
 end
