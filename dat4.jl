@@ -18,7 +18,7 @@ Load_SE=array_data[:,10]
 Hydro_inflow=array_data[:,11]
 
 # Sets
-I = 1:5 # 7 energy types
+I = [1,2,3,4,5,7] # 7 energy types
 J = 1:3 # Set of countries
 S=1:length(time_arr) # set of hours
 

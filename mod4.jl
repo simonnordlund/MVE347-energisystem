@@ -102,8 +102,8 @@ function build_energy_model(data_file::String)
     for hour in S, j in J
         @constraint(m, Trans_Flow[j,j,hour] == 0)
     end
-
     @constraint(m,[j in J],Trans_Cap[j,j]==0)
+
     #@constraint(m, TRANSMISSION_CAP1[j1 in J, j2 in J,s in S], Trans_Flow[j1, j2,s]-Trans_Flow[j2,j1,s]  <= z[6,j1] )
     #@constraint(m, TRANSMISSION_CAP2[j1 in J, j2 in J,s in S], Trans_Flow[j2, j1,s]-Trans_Flow[j1,j2,s]  <= z[6,j1] )
     
