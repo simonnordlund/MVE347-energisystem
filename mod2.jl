@@ -53,7 +53,7 @@ function build_energy_model(data_file::String)
         @constraint(m,volume[hour] == volume[hour-1] - x[4,2,hour-1] + Hydro_inflow[hour-1]) #Waterflow each hour
     end
     @constraint(m,[i in [1,3],s in S], x[4,i,s] == 0) #No water in DK & DE
-    @constraint(m,volume[1] == volume[end] - sum(x[4,j,end] for j in J) + Hydro_inflow[end]) #Circular flow
+    @constraint(m,volume[1] == volume[end] - x[4,2,end] + Hydro_inflow[end]) #Circular flow
     
     @constraint(m,[s in S], 0 <= volume[s] <= 33*10^6) #Reservoir limits
     @constraint(m, Max_Hydro[s in S], x[4,2,s]<= volume[s])

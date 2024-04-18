@@ -55,7 +55,7 @@ function build_energy_model(data_file::String)
         @constraint(m,volume[hour] == volume[hour-1] - x[4,2,hour-1] + Hydro_inflow[hour-1]) #Waterflow each hour
     end
     @constraint(m,[i in [1,3],s in S], x[4,i,s] == 0) #No water in DK & DE
-    @constraint(m,volume[1] == volume[end] - sum(x[4,j,end] for j in J) + Hydro_inflow[end]) #Circular flow
+    @constraint(m,volume[1] == volume[end] - x[4,2,end] + Hydro_inflow[end]) #Circular flow
     
     @constraint(m,[s in S], 0 <= volume[s] <= 33*10^6) #Reservoir limits
     @constraint(m, Max_Hydro[s in S], x[4,2,s]<= volume[s])
@@ -69,7 +69,7 @@ function build_energy_model(data_file::String)
 
     #Constraints for batteries
     @constraint(m, Battery_Inflow_Cap[j in J,s in S], Battery_Flow[j,s] <= z[5,j] ) #Can't charge a battery more than there is capacity
-    #@constraint(m, [j in J, s in S],batterystorage[j,s] <= z[5,j] ) #Make sure that the charge does not exceed maximum capacity.
+    @constraint(m, [j in J, s in S],batterystorage[j,s] <= z[5,j] ) #Make sure that the charge does not exceed maximum capacity.
 
     for hour in 2:length(time_arr)
         @constraint(m,batterystorage[1,hour] == batterystorage[1,hour-1] + Battery_Flow[1,hour]*efficiency[5] - x[5,1,hour] ) #Battery charge flow DE
@@ -93,7 +93,8 @@ function build_energy_model(data_file::String)
    
     #Transmission Constraints
 
-    @constraint(m,Trans_every_hour_not_max[j1 in J, j2 in J, s in S], Trans_Flow[j1,j2,s]<=Trans_Cap[j1,j2])
+    @constraint(m,Trans_every_hour_not_max1[j1 in J, j2 in J, s in S], Trans_Flow[j1,j2,s] - Trans_Flow[j2,j1,s] <= Trans_Cap[j1,j2])
+    @constraint(m,Trans_every_hour_not_max2[j1 in J, j2 in J, s in S], Trans_Flow[j2,j1,s] - Trans_Flow[j1,j2,s] <= Trans_Cap[j1,j2])
     @constraint(m,Trans_left_right_cap[j1 in J, j2 in J], Trans_Cap[j1,j2]==Trans_Cap[j2,j1])
 
     #@constraint(m, TRANSMISSION_NET[j1 in J, s in S], -sum( Trans_Flow[j1,j2,s] for j2 in J)+sum(Trans_Flow[j2,j1,s] for j2 in J)  == Trans_Net[j1,s]*efficiency[6] ) 
