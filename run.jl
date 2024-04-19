@@ -35,27 +35,43 @@ using Plots
 using PlotlyJS
 
 hours = 147:651
-println(hours)
 
-PlotlyJS.plot([
+using Plots
+using PlotlyJS
+
+hours = 147:651
+
+plot1 = PlotlyJS.plot([
     PlotlyJS.scatter(
         hours = hours, y = value.(e[1,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(131, 90, 241)")
+        line=attr(width=0.5, color="rgb(131, 90, 241)"),
+        name="Wind"  # Add name attribute here
     ),
     PlotlyJS.scatter(
         hours = hours, y = value.(e[2,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(111, 231, 219)")
+        line=attr(width=0.5, color="rgb(111, 231, 219)"),
+        name="PV"  # Add name attribute here
     ),
     PlotlyJS.scatter(
         hours = hours, y = value.(e[3,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(184, 247, 2121)")
+        line=attr(width=0.5, color="rgb(184, 247, 2121)"),
+        name="Gas"  # Add name attribute here
     ),
     PlotlyJS.scatter(
         hours = hours, y = value.(e[4,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(199, 300, 356)")
+        line=attr(width=0.5, color="rgb(199, 300, 356)"),
+        name="Hydro"  # Add name attribute here
     ),
-], Layout(yaxis_range=(0, 100)))
+], Layout(
+    xaxis_title = "Hours",
+    yaxis_title = "MWh",
+    title = "Energy production in Germany between hour 147 and 651"
+))
+
+PlotlyJS.savefig(plot1, "germany_1.svg")
+
+PlotlyJS.savefig(plot1,"germany_1.svg")
