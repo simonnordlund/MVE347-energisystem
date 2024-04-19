@@ -2,7 +2,7 @@ using JuMP      #load the package JuMP
 using Clp       #load the package Clp (an open linear-programming solver)
 using Gurobi   #The commercial optimizer Gurobi requires installation
 include("mod.jl")
-m, x, z = build_energy_model("dat.jl")
+m, e, z = build_energy_model("dat.jl")
 #print(m) # prints the model instance
 #set_optimizer(m, clp.Optimizer)
 set_optimizer_attribute(m, "LogLevel", 1)
@@ -10,22 +10,52 @@ set_optimizer(m, Gurobi.Optimizer)
 optimize!(m)
 
 println("z =  ", objective_value(m))   		# display the optimal solution
-println("x=",(0.202/0.4)*sum(value.(x[3,j,s]) for s in S for j in J),"co2")
+println("x=",(0.202/0.4)*sum(value.(e[3,j,s]) for s in S for j in J),"co2")
 
-power=zeros(I,J)
+#power=zeros(I,J)
 
-for i in I, j in J
-    power[i,j]=value.sum(x[i,j,s] for s in S)
-end
+#for i in I, j in J
+#    power[i,j]=value.sum(x[i,j,s] for s in S)
+#end
+#
+#Power_per_hour=zeros(I,j,S)
+#
+#for s in s, i in i, j in J
+#    Power_per_hour[i,j,s]=value.(x[i,j,s])
+#end 
+#
+#Avg_cap_PV_Wind=zeros(1:2,J)
+#
+#for i in 1:2,j in J
+#    Avg_cap_PV_Wind[i,j]=sum(Power_per_hour[i,j,s] for s in S)/length(S)
+#end
 
-Power_per_hour=zeros(I,j,S)
 
-for s in s, i in i, j in J
-    Power_per_hour[i,j,s]=value.(x[i,j,s])
-end 
+using Plots
+using PlotlyJS
 
-Avg_cap_PV_Wind=zeros(1:2,J)
+hours = 147:651
+println(hours)
 
-for i in 1:2,j in J
-    Avg_cap_PV_Wind[i,j]=sum(Power_per_hour[i,j,s] for s in S)/length(S)
-end
+PlotlyJS.plot([
+    PlotlyJS.scatter(
+        hours = hours, y = value.(e[1,1,hours]),
+        stackgroup="one", mode="lines", hoverinfo="x+y",
+        line=attr(width=0.5, color="rgb(131, 90, 241)")
+    ),
+    PlotlyJS.scatter(
+        hours = hours, y = value.(e[2,1,hours]),
+        stackgroup="one", mode="lines", hoverinfo="x+y",
+        line=attr(width=0.5, color="rgb(111, 231, 219)")
+    ),
+    PlotlyJS.scatter(
+        hours = hours, y = value.(e[3,1,hours]),
+        stackgroup="one", mode="lines", hoverinfo="x+y",
+        line=attr(width=0.5, color="rgb(184, 247, 2121)")
+    ),
+    PlotlyJS.scatter(
+        hours = hours, y = value.(e[4,1,hours]),
+        stackgroup="one", mode="lines", hoverinfo="x+y",
+        line=attr(width=0.5, color="rgb(199, 300, 356)")
+    ),
+], Layout(yaxis_range=(0, 100)))
