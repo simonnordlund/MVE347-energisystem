@@ -45,25 +45,25 @@ plot1 = PlotlyJS.plot([
     PlotlyJS.scatter(
         hours = hours, y = value.(e[1,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(131, 90, 241)"),
+        line=attr(width=0.5, color="rgb(255, 255, 255)"),
         name="Wind"  # Add name attribute here
     ),
     PlotlyJS.scatter(
         hours = hours, y = value.(e[2,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(111, 231, 219)"),
+        line=attr(width=0.5, color="rgb(245, 236, 66)"),
         name="PV"  # Add name attribute here
     ),
     PlotlyJS.scatter(
         hours = hours, y = value.(e[3,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(184, 247, 2121)"),
+        line=attr(width=0.5, color="rgb(245, 66, 66)"),
         name="Gas"  # Add name attribute here
     ),
     PlotlyJS.scatter(
         hours = hours, y = value.(e[4,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(199, 300, 356)"),
+        line=attr(width=0.5, color="rgb(66, 108, 245)"),
         name="Hydro"  # Add name attribute here
     ),
 ], Layout(
