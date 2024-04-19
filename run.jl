@@ -66,7 +66,8 @@ plot1 = PlotlyJS.plot([
         line=attr(width=0.5, color="rgb(66, 108, 245)"),
         name="Hydro"  # Add name attribute here
     ),
-    PlotlyJS.plot(hours=hours,y=Load_DE[hours])
+    PlotlyJS.scatter(hours=hours,y=Load_DE[hours], line=attr(width=3,color="black"),
+    name="load")
 ], Layout(
     xaxis_title = "Hours",
     yaxis_title = "MWh",
