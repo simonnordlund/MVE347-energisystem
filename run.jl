@@ -66,6 +66,7 @@ plot1 = PlotlyJS.plot([
         line=attr(width=0.5, color="rgb(66, 108, 245)"),
         name="Hydro"  # Add name attribute here
     ),
+    PlotlyJS.plot(hours=hours,y=Load_DE[hours])
 ], Layout(
     xaxis_title = "Hours",
     yaxis_title = "MWh",
