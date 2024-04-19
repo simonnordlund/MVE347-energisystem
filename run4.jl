@@ -16,7 +16,7 @@ println("Transmission flow ","DE-SE  ", value.(sum(Trans_Flow[1,2,s] for s in S)
 
 
 
-power=zeros(length(I),length(J))
+power=zeros(7,length(J))
 
 for i in I, j in J
     power[i,j]=value.(sum(x[i,j,s] for s in S))
