@@ -12,11 +12,11 @@ optimize!(m)
 println("z =  ", objective_value(m))   		# display the optimal solution
 println("x=",(0.202/0.4)*sum(value.(e[3,j,s]) for s in S for j in J),"co2")
 
-#power=zeros(I,J)
+power=zeros(length(I),length(J))
 
-#for i in I, j in J
-#    power[i,j]=value.sum(x[i,j,s] for s in S)
-#end
+for i in I, j in J
+    power[i,j]=value.(sum(x[i,j,s] for s in S))
+end
 #
 #Power_per_hour=zeros(I,j,S)
 #
@@ -73,7 +73,27 @@ plot1 = PlotlyJS.plot([
     yaxis_title = "MWh",
     title = "Energy production in Germany between hour 147 and 651"
 ))
+using StatsPlots
+
+ticklabel = ["Sweden", "Germany", "Denmark"]
+plot2=StatsPlots.groupedbar([power[1,:] power[2, :] power[3, :] power[4,:]],
+    bar_position = :stack,
+    bar_width = 0.7,
+    xticks = (1:3, ticklabel),
+    label = ["Wind" "PV" "Gas" "Hydro"],
+    bar_color=[":white" ":yellow" ":red" ":blue"])
+
+
+ticklabel = ["Sweden", "Germany", "Denmark"]
+plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) value.(z[4,:])],
+    bar_position = :stack,
+    bar_width = 0.7,
+    xticks = (1:3, ticklabel),
+    label = ["Wind" "PV" "Gas" "Hydro"],
+    bar_color=[":white" ":yellow" ":red" ":blue"])
+
+
 
 PlotlyJS.savefig(plot1, "germany_1.svg")
-
-PlotlyJS.savefig(plot1,"germany_1.svg")
+Plots.savefig(plot2, "annaual_1.svg")
+Plots.savefig(plot3, "capacity_1.svg")
