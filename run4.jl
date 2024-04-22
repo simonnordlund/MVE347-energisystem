@@ -49,7 +49,7 @@ plot1 = PlotlyJS.plot([
     PlotlyJS.scatter(
         hours = hours, y = value.(e[1,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(255, 255, 255)"),
+        line=attr(width=0.5, color="rgb(248, 3, 252)"),
         name="Wind"  # Add name attribute here
     ),
     PlotlyJS.scatter(
