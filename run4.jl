@@ -82,6 +82,12 @@ plot1 = PlotlyJS.plot([
         line=attr(width=0.5, color="rgb(52, 254, 123)"),
         name="Nuclear"  # Add name attribute here
     ),
+    PlotlyJS.scatter(
+        hours = hours, y = value.(sum(Trans_Flow[j,1,hours] for j in J)),
+        stackgroup="one", mode="lines", hoverinfo="x+y",
+        line=attr(width=0.5, color="rgb(118, 120, 68)"),
+        name="transmission"  # Add name attribute here
+    ),
     PlotlyJS.scatter(hours=hours,y=Load_DE[hours], line=attr(width=3,color="black"),
     name="load")
 ], Layout(
