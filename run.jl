@@ -75,7 +75,7 @@ plot1 = PlotlyJS.plot([
 ))
 using StatsPlots
 
-ticklabel = ["Sweden", "Germany", "Denmark"]
+ticklabel = ["Germany","Sweden", "Denmark"]
 plot2=StatsPlots.groupedbar([power[1,:] power[2, :] power[3, :] power[4,:]],
     bar_position = :stack,
     bar_width = 0.7,
@@ -84,7 +84,7 @@ plot2=StatsPlots.groupedbar([power[1,:] power[2, :] power[3, :] power[4,:]],
     bar_color=[":white" ":yellow" ":red" ":blue"])
 
 
-ticklabel = ["Sweden", "Germany", "Denmark"]
+ticklabel = ["Germany","Sweden", "Denmark"]
 plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) value.(z[4,:])],
     bar_position = :stack,
     bar_width = 0.7,

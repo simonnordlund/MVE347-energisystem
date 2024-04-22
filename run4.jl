@@ -73,7 +73,7 @@ plot1 = PlotlyJS.plot([
     PlotlyJS.scatter(
         hours = hours, y = value.(e[5,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(66, 108, 245)"),
+        line=attr(width=0.5, color="rgb(32, 58, 95)"),
         name="battery"  # Add name attribute here
     ),
     PlotlyJS.scatter(
@@ -91,7 +91,7 @@ plot1 = PlotlyJS.plot([
 ))
 using StatsPlots
 
-ticklabel = ["Sweden", "Germany", "Denmark"]
+ticklabel = ["Germany","Sweden", "Denmark"]
 plot2=StatsPlots.groupedbar([power[1,:] power[2, :] power[3, :] power[4,:] power[5,:] power[7,:]],
     bar_position = :stack,
     bar_width = 0.7,
@@ -100,15 +100,23 @@ plot2=StatsPlots.groupedbar([power[1,:] power[2, :] power[3, :] power[4,:] power
     bar_color=[":white" ":yellow" ":red" ":blue"])
 
 
-ticklabel = ["Sweden", "Germany", "Denmark"]
-plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) value.(z[4,:]) value.(z[5,:]) [value.(Trans_Cap[1,2]), value.(Trans_Cap[1,3]), value.(Trans_Cap[2,3])]],
+ticklabel = ["Germany","Sweden", "Denmark"]
+plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) value.(z[4,:]) value.(z[5,:])],
     bar_position = :stack,
     bar_width = 0.7,
     xticks = (1:3, ticklabel),
     label = ["Wind" "PV" "Gas" "Hydro" "Battery" "Transmission" "Nuclear"],
     bar_color=[":white" ":yellow" ":red" ":blue"])
 
+ticklabel=["Germany_Sweden","Germany_Denmark", "Sweden_Denmark"]
+plot4=Plots.bar(ticklabel,[value.(Trans_Cap[1,2]), value.(Trans_Cap[1,3]), value.(Trans_Cap[2,3])],xlabel="countries",ylabel="Transmission Capacities (MW)", title="Transmission Capacities by\n Country to country", legend=false)
+
+ticklabel=["Germany","Sweden", "Denmark"]
+plot5=Plots.bar(ticklabel,[value.(sum(Trans_Flow[j,1,s] for j in J for s in S )), value.(sum(Trans_Flow[j,2,s] for j in J for s in S)), value.(sum(Trans_Flow[j,3,s] for j in J for s in S))],xlabel="countries",ylabel="Transmitted energy into country (MWh)", title="Transmitted energy into Country", legend=false)
+    
 
 PlotlyJS.savefig(plot1, "germany_4.svg")
 Plots.savefig(plot2, "annaual_4.svg")
 Plots.savefig(plot3, "capacity_4.svg")
+Plots.savefig(plot4, "Transmission_capacity_4.svg")
+Plots.savefig(plot5, "Transmission_flows_4.svg")
