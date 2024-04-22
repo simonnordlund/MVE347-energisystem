@@ -15,7 +15,7 @@ println("x=",(0.202/0.4)*sum(value.(e[3,j,s]) for s in S for j in J),"co2")
 power=zeros(length(I),length(J))
 
 for i in I, j in J
-    power[i,j]=value.(sum(x[i,j,s] for s in S))
+    power[i,j]=value.(sum(e[i,j,s] for s in S))
 end
 #
 #Power_per_hour=zeros(I,j,S)

@@ -5,8 +5,8 @@ include("mod4.jl")
 m, e, z,Trans_Cap,Trans_Flow = build_energy_model("dat4.jl")
 #print(m) # prints the model instance
 #set_optimizer(m, clp.Optimizer)
-set_optimizer_attribute(m, "LogLevel", 1)
-set_optimizer(m, Gurobi.Optimizer)
+set_optimizer_attributes(m, "MIPGap" => 2e-2, "TimeLimit" => 120)
+set_optimizer(m, Gurobi.Optimizer) 
 optimize!(m)
 
 println("z =  ", objective_value(m))   		# display the optimal solution
@@ -77,7 +77,7 @@ plot1 = PlotlyJS.plot([
         name="battery"  # Add name attribute here
     ),
     PlotlyJS.scatter(
-        hours = hours, y = value.(e[6,1,hours]),
+        hours = hours, y = value.(e[7,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
         line=attr(width=0.5, color="rgb(52, 254, 123)"),
         name="Nuclear"  # Add name attribute here
@@ -101,7 +101,7 @@ plot2=StatsPlots.groupedbar([power[1,:] power[2, :] power[3, :] power[4,:] power
 
 
 ticklabel = ["Sweden", "Germany", "Denmark"]
-plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) value.(z[4,:]) [value.(Trans_Cap[1,2]), value.(Trans_Cap[1,3]), value.(Trans_Cap[2,3])]],
+plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) value.(z[4,:]) value.(z[5,:]) [value.(Trans_Cap[1,2]), value.(Trans_Cap[1,3]), value.(Trans_Cap[2,3])]],
     bar_position = :stack,
     bar_width = 0.7,
     xticks = (1:3, ticklabel),
