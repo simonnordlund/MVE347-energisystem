@@ -10,7 +10,7 @@ set_optimizer(m, Gurobi.Optimizer)
 optimize!(m)
 
 println("z =  ", objective_value(m))   		# display the optimal solution
-println("x=",(0.202/0.4)*sum(value.(x[3,j,s]) for s in S for j in J),"co2")
+println("x=",(0.202/0.4)*sum(value.(e[3,j,s]) for s in S for j in J),"co2")
 println("transmission production =", " DE-SE ",value.(Trans_Cap[1,2])," DK-DE ", value.(Trans_Cap[3,1]), " SE-Dk ", value.(Trans_Cap[2,3]) )
 println("Transmission flow ","DE-SE  ", value.(sum(Trans_Flow[1,2,s] for s in S) ), "--DE-DK--- ", value.( sum(Trans_Flow[1,3,s] for s in S) ), "---SE-DK--- ", value.( sum(Trans_Flow[2,3,s] for s in S) ) )
 
@@ -19,7 +19,7 @@ println("Transmission flow ","DE-SE  ", value.(sum(Trans_Flow[1,2,s] for s in S)
 power=zeros(7,length(J))
 
 for i in I, j in J
-    power[i,j]=value.(sum(x[i,j,s] for s in S))
+    power[i,j]=value.(sum(e[i,j,s] for s in S))
 end
 #
 #Power_per_hour=zeros(I,j,S)
