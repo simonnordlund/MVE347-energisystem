@@ -100,7 +100,7 @@ plot2=StatsPlots.groupedbar([power[1,:] power[2, :] power[3, :] power[4,:] power
     bar_position = :stack,
     bar_width = 0.7,
     xticks = (1:3, ticklabel),
-    label = ["Wind" "PV" "Gas" "Hydro" "Batterattery"],
+    label = ["Wind" "PV" "Gas" "Hydro" "Battery"],
     bar_color=[":white" ":yellow" ":red" ":blue"])
 
 

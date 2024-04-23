@@ -86,7 +86,7 @@ plot1 = PlotlyJS.plot([
     PlotlyJS.scatter(
         hours = hours, y = value.(e[7,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(31, 217, 7)"),
+        line=attr(width=0.5, color="rgb(52, 254, 123)"),
         name="Nuclear"  # Add name attribute here
     ),
     PlotlyJS.scatter(
@@ -114,7 +114,7 @@ plot2=StatsPlots.groupedbar([power[1,:] power[2, :] power[3, :] power[4,:] power
 
 
 ticklabel = ["Germany","Sweden", "Denmark"]
-plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) value.(z[4,:]) value.(z[5,:])],
+plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) value.(z[4,:]) value.(z[5,:]) value.(z[7,:])],
     bar_position = :stack,
     bar_width = 0.7,
     xticks = (1:3, ticklabel),
