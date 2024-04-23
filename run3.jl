@@ -26,6 +26,18 @@ for j in J, s in S
     imported[j,s]=value.(sum(Trans_Flow[j2,j,s] for j2 in J))
 end
 #
+
+Power_per_hour=zeros(length(I),length(J),length(S))
+#
+for s in S, i in I, j in J
+    Power_per_hour[i,j,s]=value.(e[i,j,s])
+end 
+
+Avg_cap_PV_Wind=zeros(1:2,J)
+
+for i in 1:2,j in J
+    Avg_cap_PV_Wind[i,j]=sum(Power_per_hour[i,j,s] for s in S)/length(S)
+end
 #Power_per_hour=zeros(I,j,S)
 #
 #for s in s, i in i, j in J
@@ -133,3 +145,4 @@ Plots.savefig(plot5, "Transmission_flows_3.svg")
 
     
 #PlotlyJS.savefig(plot1,"germany_1.svg")
+println("Average cap ", Avg_cap_PV_Wind)

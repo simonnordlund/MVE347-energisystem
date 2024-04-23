@@ -28,7 +28,22 @@ for j in J, s in S
     imported[j,s]=value.(sum(Trans_Flow[j2,j,s] for j2 in J))
 end
 
+
+
+Power_per_hour=zeros(7,length(J),length(S))
 #
+for s in S, i in I, j in J
+    Power_per_hour[i,j,s]=value.(e[i,j,s])
+end 
+
+Avg_cap_PV_Wind=zeros(1:2,J)
+
+for i in 1:2,j in J
+    Avg_cap_PV_Wind[i,j]=sum(Power_per_hour[i,j,s] for s in S)/length(S)
+end
+
+#
+
 #Power_per_hour=zeros(I,j,S)
 #
 #for s in s, i in i, j in J
@@ -130,10 +145,11 @@ Plots.plot!(S, cumsum(imported[2,S]),label="Swedem")
 Plots.plot!(S, cumsum(imported[3,S]),label="Denmark")
 xlabel!("hours")
 ylabel!("MWh")
-title!("The imported cum transmission")
+title!("The imported cumulative transmission")
 
 PlotlyJS.savefig(plot1, "germany_4.svg")
 Plots.savefig(plot2, "annaual_4.svg")
 Plots.savefig(plot3, "capacity_4.svg")
 Plots.savefig(plot4, "Transmission_capacity_4.svg")
 Plots.savefig(plot5, "Transmission_flows_4.svg")
+println("Average cap ", Avg_cap_PV_Wind)

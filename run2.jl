@@ -18,6 +18,18 @@ power=zeros(length(I),length(J))
 for i in I, j in J
     power[i,j]=value.(sum(e[i,j,s] for s in S))
 end
+
+Power_per_hour=zeros(length(I),length(J),length(S))
+#
+for s in S, i in I, j in J
+    Power_per_hour[i,j,s]=value.(e[i,j,s])
+end 
+
+Avg_cap_PV_Wind=zeros(1:2,J)
+
+for i in 1:2,j in J
+    Avg_cap_PV_Wind[i,j]=sum(Power_per_hour[i,j,s] for s in S)/length(S)
+end
 #
 #Power_per_hour=zeros(I,j,S)
 #
@@ -103,3 +115,4 @@ plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) valu
 PlotlyJS.savefig(plot1, "germany_2.svg")
 Plots.savefig(plot2, "annaual_2.svg")
 Plots.savefig(plot3, "capacity_2.svg")
+println("Average cap ", Avg_cap_PV_Wind)
