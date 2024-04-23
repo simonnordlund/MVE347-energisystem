@@ -118,7 +118,7 @@ plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) valu
     bar_position = :stack,
     bar_width = 0.7,
     xticks = (1:3, ticklabel),
-    label = ["Wind" "PV" "Gas" "Hydro" "Battery" "Transmission" "Nuclear"],
+    label = ["Wind" "PV" "Gas" "Hydro" "Battery" "Nuclear"],
     bar_color=[":white" ":yellow" ":red" ":blue"])
 
 ticklabel=["Germany_Sweden","Germany_Denmark", "Sweden_Denmark"]
