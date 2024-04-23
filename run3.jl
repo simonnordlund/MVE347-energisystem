@@ -72,13 +72,13 @@ plot1 = PlotlyJS.plot([
         hours = hours, y = value.(e[4,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
         line=attr(width=0.5, color="rgb(66, 108, 245)"),
-        name="hydro"  # Add name attribute here
+        name="Hydro"  # Add name attribute here
     ),
     PlotlyJS.scatter(
         hours = hours, y = value.(e[5,1,hours]),
         stackgroup="one", mode="lines", hoverinfo="x+y",
         line=attr(width=0.5, color="rgb(32, 58, 95)"),
-        name="battery"  # Add name attribute here
+        name="Battery"  # Add name attribute here
     ),
     PlotlyJS.scatter(
         hours = hours, y =imported[1,hours],
@@ -118,11 +118,11 @@ ticklabel=["Germany_Sweden","Germany_Denmark", "Sweden_Denmark"]
 plot4=Plots.bar(ticklabel,[value.(Trans_Cap[1,2]), value.(Trans_Cap[1,3]), value.(Trans_Cap[2,3])],xlabel="countries",ylabel="Transmission Capacities (MW)", title="Transmission Capacities by\n Country to country", legend=false)
 
 plot5=Plots.plot(S, cumsum(imported[1,S]),label="Germany")
-Plots.plot!(S, cumsum(imported[2,S]),label="Swedem")
+Plots.plot!(S, cumsum(imported[2,S]),label="Sweden")
 Plots.plot!(S, cumsum(imported[3,S]),label="Denmark")
 xlabel!("hours")
 ylabel!("MWh")
-title!("The imported cum transmission")
+title!("The imported cumulative transmission")
 
 
 PlotlyJS.savefig(plot1, "germany_3.svg")
