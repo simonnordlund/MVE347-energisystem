@@ -20,6 +20,11 @@ power=zeros(length(I),length(J))
 for i in I, j in J
     power[i,j]=value.(sum(e[i,j,s] for s in S))
 end
+
+imported=zeros(length(J),length(S))
+for j in J, s in S
+    imported[j,s]=value.(sum(Trans_Flow[j2,j,s] for j2 in J))
+end
 #
 #Power_per_hour=zeros(I,j,S)
 #
@@ -76,10 +81,10 @@ plot1 = PlotlyJS.plot([
         name="battery"  # Add name attribute here
     ),
     PlotlyJS.scatter(
-        hours = hours, y = value.(sum(Trans_Flow[j,1,hours] for j in J)),
+        hours = hours, y =imported[1,hours],
         stackgroup="one", mode="lines", hoverinfo="x+y",
-        line=attr(width=0.5, color="rgb(118, 120, 68)"),
-        name="transmission"  # Add name attribute here
+        line=attr(width=0.5, color="rgb(0, 255, 217)"),
+        name=" Imported transmission"  # Add name attribute here
     ),
     PlotlyJS.scatter(hours=hours,y=Load_DE[hours], line=attr(width=3,color="black"),
     name="load")
@@ -112,8 +117,13 @@ plot3=StatsPlots.groupedbar([value.(z[1,:]) value.(z[2, :]) value.(z[3, :]) valu
 ticklabel=["Germany_Sweden","Germany_Denmark", "Sweden_Denmark"]
 plot4=Plots.bar(ticklabel,[value.(Trans_Cap[1,2]), value.(Trans_Cap[1,3]), value.(Trans_Cap[2,3])],xlabel="countries",ylabel="Transmission Capacities (MW)", title="Transmission Capacities by\n Country to country", legend=false)
 
-ticklabel=["Germany","Sweden", "Denmark"]
-plot5=Plots.bar(ticklabel,[value.(sum(Trans_Flow[j,1,s] for j in J for s in S )), value.(sum(Trans_Flow[j,2,s] for j in J for s in S)), value.(sum(Trans_Flow[j,3,s] for j in J for s in S))],xlabel="countries",ylabel="Transmitted energy into country (MWh)", title="Transmitted energy into Country", legend=false)
+plot5=Plots.plot(S, cumsum(imported[1,S]),label="Germany")
+Plots.plot!(S, cumsum(imported[2,S]),label="Swedem")
+Plots.plot!(S, cumsum(imported[3,S]),label="Denmark")
+xlabel!("hours")
+ylabel!("MWh")
+title!("The imported cum transmission")
+
 
 PlotlyJS.savefig(plot1, "germany_3.svg")
 Plots.savefig(plot2, "annaual_3.svg")
